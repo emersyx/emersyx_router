@@ -6,6 +6,18 @@ import (
 	"fmt"
 )
 
+// SetOptions sets the options received as argument.
+func (r *Router) SetOptions(options ...func(emcomapi.Router) error) error {
+	// apply the configuration options received as arguments
+	for _, option := range options {
+		err := option(r)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetGateway iterates over all loaded gateways and searches for the one with the specified identifier. An error is
 // returned if the identifier argument is empty or if a gateway with the specified identifier is not found.
 func (r *Router) GetGateway(id string) (emcomapi.Identifiable, error) {
@@ -23,6 +35,12 @@ func (r *Router) GetGateway(id string) (emcomapi.Identifiable, error) {
 // Run starts receiving messages from gateways (which are also receptors) and processors. The events are forwarded to
 // processors based on the configured routes. The forwardEvent method is used for this purpose.
 func (r *Router) Run() error {
+	// lock the mutex which protects access to the Router object members (e.g. isRunning)
+	r.mutex.Lock()
+
+	// mark the router as running
+	r.isRunning = true
+
 	// create a sink channel where events from all receptor gateways are sent
 	sink := make(chan emcomapi.Event)
 
@@ -38,6 +56,9 @@ func (r *Router) Run() error {
 	for _, proc := range r.procs {
 		funnelEvents(sink, proc.GetOutEventsChannel())
 	}
+
+	// unlock the mutex just before the possibly infinite loop which forwards events
+	r.mutex.Unlock()
 
 	// start an infinite loop where events are received from the sink channel and forwarded to the processors based on
 	// the configured routes

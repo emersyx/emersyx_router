@@ -2,23 +2,30 @@ package emrtr
 
 import (
 	"emersyx.net/emersyx_apis/emcomapi"
-	"emersyx.net/emersyx_apis/emrtrapi"
 	"errors"
 	"fmt"
 )
 
-// RouterOptions implements the emrtrapi.RouterOptions interface. Each method returns a function, which applies a
+// RouterOptions implements the emcomapi.RouterOptions interface. Each method returns a function, which applies a
 // specific configuration to an IRCGateway object.
 type RouterOptions struct {
 }
 
 // Gateways sets the emersyx gateway instances for the router.
-func (o RouterOptions) Gateways(gws ...emcomapi.Identifiable) func(emrtrapi.Router) error {
-	return func(rtr emrtrapi.Router) error {
+func (o RouterOptions) Gateways(gws ...emcomapi.Identifiable) func(emcomapi.Router) error {
+	return func(rtr emcomapi.Router) error {
 		crtr, ok := rtr.(*Router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}
+
+		crtr.mutex.Lock()
+		defer crtr.mutex.Unlock()
+
+		if crtr.isRunning {
+			return errors.New("cannot set the Gateways option after calling the Router.Run method")
+		}
+
 		for _, gw := range gws {
 			crtr.gws = append(crtr.gws, gw)
 		}
@@ -27,12 +34,20 @@ func (o RouterOptions) Gateways(gws ...emcomapi.Identifiable) func(emrtrapi.Rout
 }
 
 // Processors sets the emersyx processor instances for the router.
-func (o RouterOptions) Processors(procs ...emcomapi.Processor) func(emrtrapi.Router) error {
-	return func(rtr emrtrapi.Router) error {
+func (o RouterOptions) Processors(procs ...emcomapi.Processor) func(emcomapi.Router) error {
+	return func(rtr emcomapi.Router) error {
 		crtr, ok := rtr.(*Router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}
+
+		crtr.mutex.Lock()
+		defer crtr.mutex.Unlock()
+
+		if crtr.isRunning {
+			return errors.New("cannot set the Gateways option after calling the Router.Run method")
+		}
+
 		for _, proc := range procs {
 			crtr.procs = append(crtr.procs, proc)
 		}
@@ -41,12 +56,20 @@ func (o RouterOptions) Processors(procs ...emcomapi.Processor) func(emrtrapi.Rou
 }
 
 // Routes sets the emersyx routes required to forward events between components.
-func (o RouterOptions) Routes(routes map[string][]string) func(emrtrapi.Router) error {
-	return func(rtr emrtrapi.Router) error {
+func (o RouterOptions) Routes(routes map[string][]string) func(emcomapi.Router) error {
+	return func(rtr emcomapi.Router) error {
 		crtr, ok := rtr.(*Router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}
+
+		crtr.mutex.Lock()
+		defer crtr.mutex.Unlock()
+
+		if crtr.isRunning {
+			return errors.New("cannot set the Gateways option after calling the Router.Run method")
+		}
+
 		for src, dsts := range routes {
 			if len(src) == 0 {
 				return errors.New("provided route with empty source is not valid")

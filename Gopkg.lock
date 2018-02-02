@@ -4,12 +4,12 @@
 [[projects]]
   branch = "master"
   name = "emersyx.net/emersyx_apis"
-  packages = ["emcomapi","emrtrapi"]
-  revision = "7d7a6d4783a19b96d658270af206b1e04de8c941"
+  packages = ["emcomapi"]
+  revision = "2ff5e668f18159ebf8fec9b99c5bec924d72b3c0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b3f07a794b2d19e9eea1286278a85707f19ab469816a65cf5aac11c5d2cf8f1a"
+  inputs-digest = "7eb3471c1676617bbd19ac90245253510deb9d7b9a0449f5b5f56a2d2dca4379"
   solver-name = "gps-cdcl"
   solver-version = 1
