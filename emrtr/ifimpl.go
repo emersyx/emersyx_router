@@ -75,11 +75,13 @@ func (r *Router) Run() error {
 // same sink channel is reused for all calls to this function throughout the codebase of the router. This is why the
 // function name contains the word "funnel".
 func funnelEvents(sink chan emcomapi.Event, source <-chan emcomapi.Event) {
-	go func() {
-		for ev := range source {
-			sink <- ev
-		}
-	}()
+	if source != nil {
+		go func() {
+			for ev := range source {
+				sink <- ev
+			}
+		}()
+	}
 }
 
 // forwardEvent simply forwards the event given as argument to processors based on the configured routes.
