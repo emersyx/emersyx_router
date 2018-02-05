@@ -6,15 +6,15 @@ import (
 	"fmt"
 )
 
-// RouterOptions implements the emcomapi.RouterOptions interface. Each method returns a function, which applies a
+// routerOptions implements the emcomapi.RouterOptions interface. Each method returns a function, which applies a
 // specific configuration to an IRCGateway object.
-type RouterOptions struct {
+type routerOptions struct {
 }
 
 // Gateways sets the emersyx gateway instances for the router.
-func (o RouterOptions) Gateways(gws ...emcomapi.Identifiable) func(emcomapi.Router) error {
+func (o routerOptions) Gateways(gws ...emcomapi.Identifiable) func(emcomapi.Router) error {
 	return func(rtr emcomapi.Router) error {
-		crtr, ok := rtr.(*Router)
+		crtr, ok := rtr.(*router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}
@@ -34,9 +34,9 @@ func (o RouterOptions) Gateways(gws ...emcomapi.Identifiable) func(emcomapi.Rout
 }
 
 // Processors sets the emersyx processor instances for the router.
-func (o RouterOptions) Processors(procs ...emcomapi.Processor) func(emcomapi.Router) error {
+func (o routerOptions) Processors(procs ...emcomapi.Processor) func(emcomapi.Router) error {
 	return func(rtr emcomapi.Router) error {
-		crtr, ok := rtr.(*Router)
+		crtr, ok := rtr.(*router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}
@@ -56,9 +56,9 @@ func (o RouterOptions) Processors(procs ...emcomapi.Processor) func(emcomapi.Rou
 }
 
 // Routes sets the emersyx routes required to forward events between components.
-func (o RouterOptions) Routes(routes map[string][]string) func(emcomapi.Router) error {
+func (o routerOptions) Routes(routes map[string][]string) func(emcomapi.Router) error {
 	return func(rtr emcomapi.Router) error {
-		crtr, ok := rtr.(*Router)
+		crtr, ok := rtr.(*router)
 		if ok == false {
 			return errors.New("unsupported Router implementation")
 		}

@@ -5,9 +5,9 @@ import (
 	"sync"
 )
 
-// Router is the struct type which implements the emcomapi.Router interface. Objects of this type are used to route
+// router is the struct type which implements the emcomapi.Router interface. Objects of this type are used to route
 // events from receptor gateways to processors.
-type Router struct {
+type router struct {
 	gws       []emcomapi.Identifiable
 	procs     []emcomapi.Processor
 	routes    map[string][]string
@@ -15,13 +15,13 @@ type Router struct {
 	mutex     sync.Mutex
 }
 
-// NewRouter creates a new Router instance, applies the options given as argument, checks for error conditions and if
+// NewRouter creates a new router instance, applies the options given as argument, checks for error conditions and if
 // none are met, returns the object.
 func NewRouter() (emcomapi.Router, error) {
-	rtr := new(Router)
+	rtr := new(router)
 
 	// the router is initially not running
-	// this member is set to true once the Router.Run method is called
+	// this member is set to true once the router.Run method is called
 	rtr.isRunning = false
 
 	// create member arrays with default sizes
