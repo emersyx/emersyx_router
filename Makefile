@@ -1,13 +1,12 @@
-.PHONY: emrtr-dep emrtr-goget test
-
-emrtr-dep:
-	dep ensure
+emrtr.so: goget
 	go build -buildmode=plugin -o emrtr.so emrtr/*
 
-emrtr-goget:
-	go get -t -buildmode=plugin ./emrtr
+.PHONY: goget
+goget:
+	go get emersyx.net/emersyx_apis/emcomapi
 
-test:
+.PHONY: test
+test: emrtr.so
 	@echo "Running the tests with gofmt, go vet and golint..."
 	@test -z $(shell gofmt -s -l emrtr/*.go)
 	@go vet ./...
