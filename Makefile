@@ -1,10 +1,10 @@
 emrtr.so: goget
-	go build -buildmode=plugin -o emrtr.so emrtr/*
+	@go build -buildmode=plugin -o emrtr.so emrtr/*
 
 .PHONY: goget
 goget:
-	go get emersyx.net/emersyx_apis/emcomapi
-	go get github.com/golang/lint/golint
+	@go get emersyx.net/emersyx_apis/emcomapi
+	@go get github.com/golang/lint/golint
 
 .PHONY: test
 test: emrtr.so
