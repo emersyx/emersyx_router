@@ -88,3 +88,8 @@ func (o routerOptions) Routes(routes map[string][]string) func(emcomapi.Router) 
 		return nil
 	}
 }
+
+// NewRouterOptions generates a new routerOptions object and returns a pointer to it.
+func NewRouterOptions() emcomapi.RouterOptions {
+	return new(routerOptions)
+}
