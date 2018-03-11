@@ -25,8 +25,8 @@ func NewRouter() (emcomapi.Router, error) {
 	rtr.isRunning = false
 
 	// create member arrays with default sizes
-	rtr.gws = make([]emcomapi.Identifiable, 1)
-	rtr.procs = make([]emcomapi.Processor, 1)
+	rtr.gws = make([]emcomapi.Identifiable, 0)
+	rtr.procs = make([]emcomapi.Processor, 0)
 	rtr.routes = make(map[string][]string)
 
 	return rtr, nil
