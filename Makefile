@@ -4,6 +4,7 @@ emrtr.so: goget
 .PHONY: goget
 goget:
 	@go get emersyx.net/emersyx_apis/emcomapi
+	@go get emersyx.net/emersyx_log/emlog
 	@go get github.com/golang/lint/golint
 
 .PHONY: test
