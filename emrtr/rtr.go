@@ -25,8 +25,8 @@ func NewRouter() (emcomapi.Router, error) {
 
 	rtr := new(router)
 
-	// generate a bare logger, to be updated via options
-	rtr.log, err = emlog.NewEmersyxLogger(nil, "", emlog.ELNone)
+	// generate a logger, to be updated via options
+	rtr.log, err = emlog.NewEmersyxLogger(nil, "emrtr", emlog.ELNone)
 	if err != nil {
 		return nil, errors.New("could not create a bare logger")
 	}

@@ -45,6 +45,7 @@ func (r *router) Run() error {
 	sink := make(chan emcomapi.Event)
 
 	// iterate through all gateways
+	r.log.Debugln("funelling all gateways to the sink channel")
 	for _, gw := range r.gws {
 		// check if they are also receptors
 		if rec, ok := gw.(emcomapi.Receptor); ok {
@@ -53,6 +54,7 @@ func (r *router) Run() error {
 	}
 
 	// iterate through all processors and start routing events from them as well
+	r.log.Debugln("funelling all processors to the sink channel")
 	for _, proc := range r.procs {
 		funnelEvents(sink, proc.GetOutEventsChannel())
 	}
@@ -62,12 +64,14 @@ func (r *router) Run() error {
 
 	// start an infinite loop where events are received from the sink channel and forwarded to the processors based on
 	// the configured routes
+	r.log.Debugln("start forwarding events")
 	for ev := range sink {
 		if err := r.forwardEvent(ev); err != nil {
 			return err
 		}
 	}
 
+	r.log.Debugln("exiting the router.Run method")
 	return nil
 }
 
@@ -87,14 +91,23 @@ func funnelEvents(sink chan emcomapi.Event, source <-chan emcomapi.Event) {
 // forwardEvent simply forwards the event given as argument to processors based on the configured routes.
 func (r *router) forwardEvent(ev emcomapi.Event) error {
 	evsrc := ev.GetSourceIdentifier()
+	r.log.Debugf("forwarding event from source \"%s\"", evsrc)
 	dsts, ok := r.routes[evsrc]
+	r.log.Debugf("forwarding to %d destinations\n", len(dsts))
 	if ok {
+		fwd := ""
 		for _, dst := range dsts {
 			for _, proc := range r.procs {
 				if proc.GetIdentifier() == dst {
 					proc.GetInEventsChannel() <- ev
+					fwd = dst
 				}
 			}
+		}
+		if fwd != "" {
+			r.log.Debugf("event forwarded to destination \"%s\"", fwd)
+		} else {
+			r.log.Debugf("event was not forwarded")
 		}
 	} else {
 		return fmt.Errorf("event received with invalid source identifier \"%s\"", evsrc)

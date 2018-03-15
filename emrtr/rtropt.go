@@ -95,7 +95,7 @@ func (o routerOptions) Routes(routes map[string][]string) func(emcomapi.Router) 
 			if dsts == nil || len(dsts) == 0 {
 				return fmt.Errorf("route with source \"%s\" has an invalid set of destinations", src)
 			}
-			crtr.routes[src] = make([]string, len(dsts))
+			crtr.routes[src] = make([]string, 0)
 			for _, dst := range dsts {
 				if len(dst) == 0 {
 					return fmt.Errorf("route with source \"%s\" has an invalid destination", src)
