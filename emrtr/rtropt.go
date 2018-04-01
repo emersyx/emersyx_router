@@ -30,7 +30,7 @@ func (o routerOptions) Logging(writer io.Writer, level uint) func(emcomapi.Route
 }
 
 // Gateways sets the emersyx gateway instances for the router.
-func (o routerOptions) Gateways(gws ...emcomapi.Identifiable) func(emcomapi.Router) error {
+func (o routerOptions) Gateways(gws ...emcomapi.Gateway) func(emcomapi.Router) error {
 	return func(rtr emcomapi.Router) error {
 		crtr, ok := rtr.(*router)
 		if ok == false {

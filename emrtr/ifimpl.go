@@ -49,14 +49,16 @@ func (r *router) Run() error {
 	for _, gw := range r.gws {
 		// check if they are also receptors
 		if rec, ok := gw.(emcomapi.Receptor); ok {
-			funnelEvents(sink, rec.GetEventsChannel())
+			funnelEvents(sink, rec.GetEventsOutChannel())
 		}
 	}
 
-	// iterate through all processors and start routing events from them as well
+	// iterate through all processors and start routing events from them as well if they are receptors
 	r.log.Debugln("funelling all processors to the sink channel")
 	for _, proc := range r.procs {
-		funnelEvents(sink, proc.GetOutEventsChannel())
+		if prec, ok := proc.(emcomapi.Receptor); ok {
+			funnelEvents(sink, prec.GetEventsOutChannel())
+		}
 	}
 
 	// unlock the mutex just before the possibly infinite loop which forwards events
@@ -99,7 +101,7 @@ func (r *router) forwardEvent(ev emcomapi.Event) error {
 		for _, dst := range dsts {
 			for _, proc := range r.procs {
 				if proc.GetIdentifier() == dst {
-					proc.GetInEventsChannel() <- ev
+					proc.GetEventsInChannel() <- ev
 					fwd = dst
 				}
 			}
